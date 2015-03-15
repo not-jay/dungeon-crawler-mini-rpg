@@ -58,6 +58,7 @@ var Unit = function(data) {
 	this.charge_time	= 0;
 	this.readyToAttack	= false;
 	this.lastAttacker	= null;
+	this.state			= "idle";
 	this.avatar			= String.format("img/avatars/{0}.gif", data.sprite_name);
 	this.sprite			= {
 		"idle"		: String.format("img/sprites/{0}-idle.gif", data.sprite_name),
