@@ -165,13 +165,13 @@ Unit.prototype.checkEXP = function() {
 	}
 
 	if(level_ups > 0) {
-		this.level_up(level_ups);
+		this.levelUp(level_ups);
 		return true;
 	}
 	return false;
 };
 
-Unit.prototype.level_up = function(levels) {
+Unit.prototype.levelUp = function(levels) {
 	var new_stats, i;
 	console.log(String.format("{0} gains {1} level{2}!", this.name, levels, (levels != 1)?"s":""));
 

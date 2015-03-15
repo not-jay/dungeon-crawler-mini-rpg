@@ -24,7 +24,7 @@ var Battle = function() {
 		unit_list.sortByUID();
 	}
 
-	this.set_ui = function(ui_element) {
+	this.setUI = function(ui_element) {
 		ui.player.field = ui_element.fp;
 		ui.player.stats = ui_element.sp;
 		ui.enemy = ui_element.fe;
