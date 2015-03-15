@@ -13,10 +13,10 @@
 	<div class="center-outer"><div class="center-middle">
 		<div class="center-content center-text field">
 			<div class="two-column pull-left enemies">
-				<div id="enemy-field-0" class="field-sprite"></div>
-				<div id="enemy-field-1" class="field-sprite"></div>
-				<div id="enemy-field-2" class="field-sprite"></div>
-				<div id="enemy-field-3" class="field-sprite"></div>
+				<div id="enemy-field-0" class="field-sprite flip"></div>
+				<div id="enemy-field-1" class="field-sprite flip"></div>
+				<div id="enemy-field-2" class="field-sprite flip"></div>
+				<div id="enemy-field-3" class="field-sprite flip"></div>
 			</div>
 			<div class="two-column pull-left player">
 				<div id="player-field-0" class="field-sprite"></div>

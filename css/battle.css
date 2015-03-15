@@ -73,7 +73,7 @@ div {
 	border-color: lightsteelblue;
 }
 
-.retreating {
+.retreating, .flip {
 	-moz-transform: scaleX(-1);
 	-o-transform: scaleX(-1);
 	-webkit-transform: scaleX(-1);
