@@ -107,6 +107,8 @@ $(document).ready(function () {
 	$("#fight").click(function() {
 		battle.issue("attack");
 	});
+
+	setInterval(battle.updateUI, 500);
 });
 </script>
 </html>
