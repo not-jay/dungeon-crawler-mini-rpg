@@ -13,10 +13,16 @@
 	<div class="center-outer"><div class="center-middle">
 		<div class="center-content center-text field">
 			<div class="two-column pull-left enemies">
-				left
+				<div id="enemy-field-0" class="field-sprite"></div>
+				<div id="enemy-field-1" class="field-sprite"></div>
+				<div id="enemy-field-2" class="field-sprite"></div>
+				<div id="enemy-field-3" class="field-sprite"></div>
 			</div>
 			<div class="two-column pull-left player">
-				right
+				<div id="player-field-0" class="field-sprite"></div>
+				<div id="player-field-1" class="field-sprite"></div>
+				<div id="player-field-2" class="field-sprite"></div>
+				<div id="player-field-3" class="field-sprite"></div>
 			</div>
 		</div>
 		<div class="center-content battle-ui">
@@ -87,10 +93,19 @@
 $(document).ready(function () {
 	initBaseURL("429/final_project/");
 	
-	var battle = new Battle();
+	window.battle = new Battle();
 	battle.init();
-	battle.set_ui({
-		"fp": ""
+	battle.setUI({
+		"fp": "player-field-{0}",
+		"sp": "party-{0}",
+		"fe": "enemy-field-{0}"
+	});
+
+	$("#run").click(function() {
+		battle.issue("retreat");
+	});
+	$("#fight").click(function() {
+		battle.issue("attack");
 	});
 });
 </script>
