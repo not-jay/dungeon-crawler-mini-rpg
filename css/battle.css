@@ -5,6 +5,21 @@ div {
 .field {
 	height: 50%;
 	border-color: green;
+	background-color: cornflowerblue;
+}
+
+.field .field-sprite {
+	margin-top: 15px;
+}
+
+.field > .player > .field-sprite {
+	margin-left: auto;
+	margin-right: 15px;
+}
+
+.field > .enemies > .field-sprite {
+	margin-left: 15px;
+	margin-right: auto;
 }
 
 .battle-ui {
@@ -28,9 +43,11 @@ div {
 	margin: 15px 15px auto!important;
 }
 
-.avatar {
+.avatar, .field-sprite {
 	width: 64px;
 	height: 64px;
+	background-size: contain;
+	background-repeat: no-repeat;
 	border-color: pink;
 }
 
@@ -41,8 +58,8 @@ div {
 
 .ct {
 	margin-top: 8px;
-	margin-bottom: 0px;
-	border-radius: 0px;
+	margin-bottom: 0;
+	border-radius: 0;
 	height: 8px;
 }
 
@@ -54,4 +71,13 @@ div {
 .player {
 	height: 100%;
 	border-color: lightsteelblue;
+}
+
+.retreating {
+	-moz-transform: scaleX(-1);
+	-o-transform: scaleX(-1);
+	-webkit-transform: scaleX(-1);
+	transform: scaleX(-1);
+	filter: FlipH;
+	-ms-filter: "FlipH";
 }
