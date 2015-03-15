@@ -1,0 +1,57 @@
+div {
+	border: 1px dotted transparent;
+}
+
+.field {
+	height: 50%;
+	border-color: green;
+}
+
+.battle-ui {
+	height: 50%;
+	border-color: aqua;
+}
+
+.ui-left {
+	width: 30%;
+	height: 100%;
+	border-color: blue;
+}
+
+.ui-right {
+	width: 70%;
+	height: 100%;
+	border-color: red;
+}
+
+.party-slot {
+	margin: 15px 15px auto!important;
+}
+
+.avatar {
+	width: 64px;
+	height: 64px;
+	border-color: pink;
+}
+
+.status {
+	border-color: firebrick;
+	width: 75%;
+}
+
+.ct {
+	margin-top: 8px;
+	margin-bottom: 0px;
+	border-radius: 0px;
+	height: 8px;
+}
+
+.enemies {
+	height: 100%;
+	border-color: lightcoral;
+}
+
+.player {
+	height: 100%;
+	border-color: lightsteelblue;
+}

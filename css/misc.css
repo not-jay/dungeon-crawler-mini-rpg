@@ -1,0 +1,48 @@
+/*
+ * misc.css v3
+ *
+ * Features:
+ *  - vertical div positioning
+ *  - center-text helper class
+ *	- squeeze & two-column
+ *	- removes margin on body
+ */
+
+.center-outer {
+	display: table;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.center-middle {
+	display: table-cell;
+	vertical-align: middle;
+	padding: 0px;
+}
+
+.center-content {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.center-text {
+	text-align: center;
+}
+
+.squeeze {
+	width: 75%;
+}
+
+.squeeze-pad {
+	padding-left: 5%;
+	padding-right: 5%;
+}
+
+.two-column {
+	width: 50%;
+}
+
+body {
+	margin: 0px;
+}
