@@ -12,14 +12,16 @@ var Battle = function() {
 	var self = this;
 	var reset = [];
 	var hasEnded = false;
+	var isDungeon;
 
-	this.init = function() {
+	this.init = function(flag) {
 		var i, random;
 		player = new Party();
 		enemy = new Party();
+		isDungeon = (flag === undefined)?true:flag;
 
 		player.addAll(Unit.createAll(controller("unit/get_party", "json", 1))); //TODO: Replace 1 with user_id
-		enemy.addAll(Unit.createAll(controller("unit/get_enemy_party", "json")));
+		enemy.addAll(Unit.createAll(controller("unit/get_enemy_party", "json"))); //TODO: Use isDungeon
 		enemy.__massLevelUp(player.averageLevel());
 		unit_list = Party.merge(player, enemy);
 
@@ -66,6 +68,10 @@ var Battle = function() {
 				);
 				$(progress_bar).attr("aria-valuenow", player_unit.charge_time)
 							   .width(String.format("{0}%", player_unit.charge_time));
+				if(!player_unit.isAlive()) {
+					$(progress_bar).removeClass("progress-bar-info progress-bar-striped active");
+					$(progress_bar).addClass("progress-bar-danger");
+				}
 				if(player_unit.readyToAttack) {
 					$(progress_bar).addClass("progress-bar-info progress-bar-striped active");
 				} else {
@@ -132,7 +138,8 @@ var Battle = function() {
 		// reset states
 		for(i = 0; i < resetLength; i++) {
 			unit = reset[i];
-			unit.state = (unit.isAlive())?"idle":"dead";
+			unit.state = (unit.isAlive())?"idle":
+						 ((isDungeon)?"dead":"faint");
 		}
 		reset.splice(0, reset.length);
 
@@ -161,11 +168,8 @@ var Battle = function() {
 		self.incrementCT();
 
 		player.check();
-		// player.sortByUID();
 		enemy.check();
-		// enemy.sortByUID();
 		unit_list.check();
-		// unit_list.sortByUID();
 
 		self.check();
 	}
