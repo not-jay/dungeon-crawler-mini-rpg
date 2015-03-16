@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>Dungeon Crawler Mini-RPG</title>
 	<?= link_tag("css/misc.css"); ?>
+	<?= link_tag("css/bootstrap.min.css"); ?>
 	<style type="text/css">
 	/* I balhin lng ni into its own css */
 	.center-middle { /*Para mu work si 'height: 80%;' sa .center-content*/
@@ -24,6 +25,14 @@
 	<div class="center-outer"><div class="center-middle">
 		<div class="center-content center-text title">
 			hello
+		</div>
+		<div class="center-content center-text title">
+			<div class="two-column pull-left">
+				left
+			</div>
+			<div class="two-column pull-left">
+				right
+			</div>
 		</div>
 	</div></div>
 </body>

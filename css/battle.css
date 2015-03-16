@@ -5,7 +5,9 @@ div {
 .field {
 	height: 50%;
 	border-color: green;
-	background-color: cornflowerblue;
+	background-image: url("../img/bg/bg.gif");
+	background-size: cover;
+	background-position: 0% 85%;
 }
 
 .field .field-sprite {

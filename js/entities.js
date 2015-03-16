@@ -46,8 +46,9 @@ window.controller = function(link, type) {
 var Unit = function(data) {
 	var id				= parseInt(data.id || 1);
 	var user_id			= parseInt(data.user_id || 1);
+	var sprite_name		= data.sprite_name;
 	this.name		 	= data.name;
-	this.level			= parseInt(data.level || 1);
+	this.level			= parseInt(data.level || 0);
 	this.exp			= parseInt(data.exp || 0);
 	this.hp				= parseInt(data.hp || 0);
 	this.max_hp			= parseInt(data.max_hp || 0);
@@ -57,17 +58,19 @@ var Unit = function(data) {
 	this.speed			= parseInt(data.speed || 0);
 	this.charge_time	= 0;
 	this.readyToAttack	= false;
+	this.hasAttacked	= false;
 	this.lastAttacker	= null;
 	this.state			= "idle";
-	this.avatar			= String.format("img/avatars/{0}.gif", data.sprite_name);
-	this.sprite			= {
-		"idle"		: String.format("img/sprites/{0}-idle.gif", data.sprite_name),
-		"attack"	: String.format("img/sprites/{0}-attack.gif", data.sprite_name),
-		"retreat"	: String.format("img/sprites/{0}-retreat.gif", data.sprite_name)
-	};
 
 	this.id = function() { return id; }
 	this.user_id = function() { return user_id; }
+	this.sprite = function(key) {
+		if(key === "avatar") {
+			return String.format("img/avatars/{0}.gif", sprite_name);
+		} else {
+			return String.format("img/sprites/{0}-{1}.gif", sprite_name, key);
+		}
+	}
 }
 
 Unit.createAll = function(array) {
@@ -82,7 +85,7 @@ Unit.createAll = function(array) {
 	return units;
 }
 
-Unit.prototype.incrementCT = function() {
+Unit.prototype.incrementCT = function(delta) {
 	this.charge_time += this.speed;
 
 	if(this.charge_time >= 100) {
@@ -161,6 +164,7 @@ Unit.prototype.checkEXP = function() {
 
 	while(this.exp >= exp) {
 		level_ups++;
+		console.log(String.format("{0}'s exp is currently {1}. {2} exp to next level.", this.name, this.exp, (exp - this.exp)));
 		exp = controller("exp/get", "int", this.level + level_ups);
 	}
 
@@ -197,6 +201,8 @@ Unit.prototype.isAlive = function() {
 var Party = function() {
 	var id		= -1;
 	var units	= [];
+	var alive	= [];
+	var dead	= 0;
 
 	this.id = function(new_id) {
 		if(new_id !== undefined) {
@@ -215,6 +221,7 @@ var Party = function() {
 	this.remove = function(index) {
 		if(index < 0 || index >= units.length) return false;
 		units.splice(index, 1);
+		alive.splice(index, 1);
 		return true;
 	}
 	this.removeAll = function() {
@@ -228,11 +235,49 @@ var Party = function() {
 		if(index < 0 || index >= units.length) return null;
 		return units[index];
 	}
+	this.dead = function() {
+		return dead;
+	}
+	this.randomUnit = function() {
+		return alive[Math.floor(Math.random() * (alive.length))];
+	}
+	this.check = function() {
+		var i, length = units.length;
+		dead = 0;
+		alive = [];
+		for(i = 0; i < length; i++) {
+			if(!units[i].isAlive()) {
+				dead++;
+			} else {
+				alive.push(units[i]);
+			}
+		}
+	}
+	this.averageLevel = function() {
+		var i, total = 0,
+			length = units.length;
+		for(i = 0; i < length; i++) {
+			total += units[i].level;
+		}
+		return Math.round(total/length);
+	}
+	this.__massLevelUp = function(levels) {
+		var i,
+			length = units.length;
+
+			levels = levels || 1;
+		for(i = 0; i < length; i++) {
+			units[i].levelUp(levels);
+		}
+		return true;
+	}
 	this.size = function() {
 		return units.length;
 	}
 	this.sortByUID = function() {
-		units.sort(function(a, b) { return a.id()-b.id(); });
+		units.sort(function(a, b) {
+			return a.id()-b.id();
+		});
 		return true;
 	}
 }

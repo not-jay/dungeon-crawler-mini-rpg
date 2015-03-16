@@ -108,7 +108,8 @@ $(document).ready(function () {
 		battle.issue("attack");
 	});
 
-	setInterval(battle.updateUI, 500);
+	setInterval(battle.updateUI, 100);
+	setInterval(battle.step, 1000);
 });
 </script>
 </html>
