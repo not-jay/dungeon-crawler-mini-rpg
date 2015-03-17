@@ -50,6 +50,7 @@ div {
 	height: 64px;
 	background-size: contain;
 	background-repeat: no-repeat;
+	background-position: 0% 100%;
 	border-color: pink;
 }
 
