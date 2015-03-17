@@ -59,6 +59,7 @@ var Unit = function(data) {
 	this.charge_time	= 0;
 	this.readyToAttack	= false;
 	this.hasAttacked	= false;
+	this.isRetreating	= false;
 	this.lastAttacker	= null;
 	this.state			= "idle";
 
@@ -98,9 +99,8 @@ Unit.prototype.incrementCT = function(delta) {
 /**
  *	Returns false if attack failed (missed or couldn't attack)
  */
-Unit.prototype.attackTarget = function(target) {
-	var result = false, random, exp,
-		damage;
+Unit.prototype.attackTarget = function(target, exp_grant) {
+	var result = false, exp, damage;
 
 	if(!this.readyToAttack) {
 		console.log(String.format("{0} is not ready to attack {1} :(", this.name, target.name));
@@ -110,19 +110,20 @@ Unit.prototype.attackTarget = function(target) {
 	result = false;
 	console.log(String.format("{0} attacking {1}...", this.name, target.name));
 
-	random = Math.random() * 100;
-	if(random > target.evasion) {
+	if((Math.random() * 100) > target.evasion) {
 		damage = this.attack - target.defense;
-		if(damage < 0) {
-			damage = 0;
+		if(damage < 1) {
+			damage = 1;
 		}
 		console.log(String.format("...for {0} damage!", damage));
 
 		target.hp -= damage;
 		target.lastAttacker = this;
 
-		exp = target.checkHP();
-		this.checkEXP();
+		if(exp_grant) {
+			exp = target.checkHP();
+			this.checkEXP();
+		}
 		result = true;
 	} else {
 		console.log(String.format("...but {0} missed!", this.name));
@@ -140,7 +141,7 @@ Unit.prototype.checkHP = function() {
 	var exp;
 
 	if(this.isAlive()) {
-		console.log(String.format("{0} is still alive. Phew!", this.name));
+		console.log(String.format("{0} is still alive.", this.name));
 		return true;
 	}
 
@@ -148,6 +149,7 @@ Unit.prototype.checkHP = function() {
 	exp = controller("exp/grant_exp", "int", this.level);
 	console.log(String.format("{0} gains {1} exp", this.lastAttacker.name, exp));
 	this.lastAttacker.exp += exp;
+	this.readyToAttack = false;
 	return false;
 };
 
@@ -164,8 +166,7 @@ Unit.prototype.checkEXP = function() {
 
 	while(this.exp >= exp) {
 		level_ups++;
-		console.log(String.format("{0}'s exp is currently {1}. {2} exp to next level.", this.name, this.exp, (exp - this.exp)));
-		exp = controller("exp/get", "int", this.level + level_ups);
+		exp = controller("exp/get", "int", this.level + level_ups + 1);
 	}
 
 	if(level_ups > 0) {
@@ -177,6 +178,7 @@ Unit.prototype.checkEXP = function() {
 
 Unit.prototype.levelUp = function(levels) {
 	var new_stats, i;
+	levels = levels || 1;
 	console.log(String.format("{0} gains {1} level{2}!", this.name, levels, (levels != 1)?"s":""));
 
 	for(i = 0; i < levels; i++) {
@@ -193,6 +195,26 @@ Unit.prototype.levelUp = function(levels) {
 
 Unit.prototype.isAlive = function() {
 	return this.hp > 0;
+};
+
+Unit.prototype.jsonify = function() {
+	return {
+		"characters": {
+			"name"			: this.name,
+			"id"			: this.id()
+		},
+		"character_stats": {
+			"attack"		: this.attack,
+			"defense"		: this.defense,
+			"evasion"		: this.evasion,
+			"speed"			: this.speed,
+			"hp"			: this.hp,
+			"max_hp"		: this.max_hp,
+			"exp"			: this.exp,
+			"level"			: this.level,
+			"char_id"		: this.id()
+		}
+	};
 };
 
 /**
@@ -279,6 +301,14 @@ var Party = function() {
 			return a.id()-b.id();
 		});
 		return true;
+	}
+	this.jsonify = function() {
+		var i, json = [],
+			length = units.length;
+		for(i = 0; i < length; i++) {
+			json.push(units[i].jsonify());
+		}
+		return json;
 	}
 }
 
