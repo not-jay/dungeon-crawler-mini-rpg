@@ -108,8 +108,19 @@ $(document).ready(function () {
 		battle.issue("attack");
 	});
 
-	setInterval(battle.updateUI, 100);
-	setInterval(battle.step, 1000);
+	window.uiupdate = setInterval(battle.updateUI, 100);
+	window.stepupdate = setInterval(battle.step, 1000);
+	window.endupdate = setInterval(endBattle, 1500);
 });
+function endBattle() {
+	if(battle.hasEnded()) {
+		//show modal?
+		console.log("Huuuuuuuuuu");
+		battle.saveChanges();
+		clearInterval(window.uiupdate);
+		clearInterval(window.stepupdate);
+		clearInterval(window.endupdate);
+	}
+}
 </script>
 </html>

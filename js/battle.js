@@ -11,24 +11,26 @@ var Battle = function() {
 	};
 	var self = this;
 	var reset = [];
+	var shouldEnd = false;
 	var hasEnded = false;
 	var isDungeon;
 
 	this.init = function(flag) {
-		var i, random;
+		var i, random, x;
 		player = new Party();
 		enemy = new Party();
 		isDungeon = (flag === undefined)?true:flag;
 
 		player.addAll(Unit.createAll(controller("unit/get_party", "json", 1))); //TODO: Replace 1 with user_id
+		x = new Unit({"name": "Test", "id": "9", "sprite_name": "celes", "level": -1});
+		x.levelUp(2);
+		player.add(x); //TODO: Replace 1 with user_id
 		enemy.addAll(Unit.createAll(controller("unit/get_enemy_party", "json"))); //TODO: Use isDungeon
 		enemy.__massLevelUp(player.averageLevel());
 		unit_list = Party.merge(player, enemy);
 
 		player.check();
-		player.sortByUID();
 		enemy.check();
-		enemy.sortByUID();
 		unit_list.sortByUID();
 	}
 
@@ -107,9 +109,29 @@ var Battle = function() {
 		}
 	}
 
-	this.attack = function() {
+	this.retreat = function() {
+		var i, unit,
+			length = player.size();
+
+			for(i = 0; i < length; i++) {
+				unit = player.get(i);
+
+				if(unit.readyToAttack && unit.state === "retreat") {
+					console.log(String.format("{0} attempting to retreat", unit.name));
+					unit.readyToAttack = false;
+					unit.charge_time = 0;
+					if((Math.random() * 100) > 50) {
+						console.log("Retreat successful!");
+						shouldEnd = true;
+					}
+				}
+			}
+	}
+
+	this.attack = function(exp_grant) {
 		var i, unit, hit, target,
 			length = unit_list.size();
+			exp_grant = (exp_grant === undefined)?true:exp_grant;
 
 		for(i = 0; i < length; i++) {
 			unit = unit_list.get(i);
@@ -121,11 +143,16 @@ var Battle = function() {
 					target = (unit.user_id() !== -1) ?
 							  enemy.randomUnit() : 
 							  player.randomUnit()
-					hit = unit.attackTarget(target);
+					hit = unit.attackTarget(target, exp_grant);
 					unit.hasAttacked = true;
 				}
 				//apply damage effect if hit
-				if(hit) target.state = "hit";
+				if(hit) {
+					target.state = "hit";
+					if(target.isRetreating) {
+						this.issueUnit("fight", target);
+					}
+				}
 			}
 		}
 	}
@@ -153,18 +180,19 @@ var Battle = function() {
 			}
 		}
 
-		if(enemy.dead() === enemy.size()) {
-			console.log("You win!");
-			$(location).attr("href", link.base_url());
-		}
-		if(player.dead() === player.size()) {
-			console.log("You suck!");
-			$(location).attr("href", link.base_url());
+		hasEnded = shouldEnd;
+
+		if(player.dead() === player.size() ||
+		   enemy.dead() === enemy.size()) {
+			shouldEnd = true;
 		}
 	}
 
 	this.step = function() {
-		self.attack();
+		if(hasEnded) return;
+
+		self.retreat();
+		self.attack(isDungeon);
 		self.incrementCT();
 
 		player.check();
@@ -172,6 +200,26 @@ var Battle = function() {
 		unit_list.check();
 
 		self.check();
+	}
+
+	this.issueUnit = function(command, target) {
+		var i, length = player.size(),
+			unit, field_id;
+		for(i = 0; i < length; i++) {
+			if(target.id() === player.get(i).id()) {
+				field_id = i;
+				break;
+			}
+		}
+		if(command === "retreat") {
+			target.state = command;
+			target.isRetreating = true;
+			$(String.format("#"+ui.player.field, field_id)).addClass("retreating");
+		} else {
+			target.state = "idle";
+			target.isRetreating = false;
+			$(String.format("#"+ui.player.field, field_id)).removeClass("retreating");
+		}
 	}
 
 	this.issue = function(command) {
@@ -182,16 +230,35 @@ var Battle = function() {
 			field = String.format(ui.player.field, i);
 			unit = player.get(i);
 
+			// Retreat should only make alive units retreat;
+			if(!unit.isAlive()) continue;
 			if(command === "retreat") {
 				unit.state = command;
+				unit.isRetreating = true;
 				$(String.format("#{0}", field)).addClass("retreating");
 			} else {
 				unit.state = "idle";
+				unit.isRetreating = false;
 				$(String.format("#{0}", field)).removeClass("retreating");
 			}
 		}
 	}
 
+	this.postmortem = function() {
+
+	}
+
+	this.saveChanges = function() {
+		$.ajax(window.link.base_url("unit/update"), {
+			type: "POST",
+			data: player.jsonify(),
+			success: function(data) {
+				console.log(data);
+			}
+		});
+	}
+
+	this.hasEnded = function() { return hasEnded; }
 	this.player = function() { return player; }
 	this.enemy = function() { return enemy; }
 	this.unit_list = function() { return unit_list; }
