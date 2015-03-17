@@ -43,6 +43,7 @@ class EXP extends CI_Controller {
 		$evasion = rand(1, $stats-3);
 		$stats -= $evasion;
 
+		if($stats <= 0) $stats = 1;
 		$speed = $stats;
 
 		echo json_encode(array(
