@@ -6,7 +6,7 @@ body {
 	background-color: #262626 !important;
 }
 
-#column-2 {
+#column-2, #errors {
 	display: none;
 }
 
