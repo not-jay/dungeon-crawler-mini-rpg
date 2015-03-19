@@ -7,7 +7,8 @@ var Battle = function() {
 			"field": undefined,
 			"stats": undefined
 		},
-		"enemy": undefined
+		"enemy": undefined,
+		"modal": undefined
 	};
 	var self = this;
 	var reset = [];
@@ -15,15 +16,19 @@ var Battle = function() {
 	var hasEnded = false;
 	var isDungeon;
 
-	this.init = function(flag) {
+	this.init = function(id, enemyID, flag) {
 		var i, random, x;
 		player = new Party();
 		enemy = new Party();
 		isDungeon = (flag === undefined)?true:flag;
 
-		player.addAll(Unit.createAll(controller("unit/get_party", "json", 1))); //TODO: Replace 1 with user_id
-		enemy.addAll(Unit.createAll(controller("unit/get_enemy_party", "json"))); //TODO: Use isDungeon
-		enemy.__massLevelUp(player.averageLevel());
+		player.addAll(Unit.createAll(controller("unit/get_party", "json", id)));
+		if(isDungeon) {
+			enemy.addAll(Unit.createAll(controller("unit/get_enemy_party", "json")));
+			enemy.__massLevelUp(player.averageLevel());
+		} else {
+			enemy.addAll(Unit.createAll(controller("unit/get_party", "json", enemyID)));
+		}
 		unit_list = Party.merge(player, enemy);
 
 		player.check();
@@ -35,6 +40,7 @@ var Battle = function() {
 		ui.player.field = ui_element.fp;
 		ui.player.stats = ui_element.sp;
 		ui.enemy = ui_element.fe;
+		ui.modal = ui_element.mo;
 		self.updateUI();
 	}
 
@@ -242,19 +248,33 @@ var Battle = function() {
 	}
 
 	this.postmortem = function() {
+		var winner, dead = "",
+			i, length = player.size();
+
 		if(enemy.dead() === enemy.size())
-			console.log("Yaaaaay!");
+			winner = "player";
 		if(player.dead() === player.size())
-			console.log("Huuuuuuu :<");
+			winner = "enemy";
+
+		for(i = 0; i < length; i++) {
+			if(!player.get(i).isAlive()) {
+				dead += String.format(", {0}", player.get(i).name);
+			}
+		}
+		dead = dead.slice(2);
+
+		$(String.format("#{0} .modal-title", ui.modal)).html(String.format("You {0}!", (winner === "player")?"won":"lost"));
+		$(String.format("#{0} .modal-body", ui.modal)).html(dead);
+		$(String.format("#{0} .modal-footer", ui.modal)).html(
+			"<button type='button' class='btn btn-primary' data-dismiss='modal'>Back to Town</button>"
+		);
+		$("#"+ui.modal).modal('show');
 	}
 
 	this.saveChanges = function() {
 		if(!isDungeon) return;
-		$.ajax(window.link.base_url("unit/update"), {
-			type: "POST",
-			data: {
-				"units": player.jsonify()
-			}
+		controllerPost("unit/update", {
+			"units": player.jsonify()
 		});
 	}
 

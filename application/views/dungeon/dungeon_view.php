@@ -82,6 +82,14 @@
 			</div>
 		</div>
 	</div></div>
+	<div class="modal fade" id="modal" tabIndex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4 class="modal-title"></h4>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer"></div>
+	</div></div></div>
 </body>
 <script type="text/javascript" src="<?= base_url('js/jquery.min.js'); ?>"></script>
 <script type="text/javascript" src="<?= base_url('js/bootstrap.min.js'); ?>"></script>
@@ -90,15 +98,18 @@
 <script type="text/javascript" src="<?= base_url('js/entities.js'); ?>"></script>
 <script type="text/javascript" src="<?= base_url('js/battle.js'); ?>"></script>
 <script type="text/javascript">
+var battle, uiupdate,
+	stepupdate, endupdate;
 $(document).ready(function () {
 	initBaseURL("429/final_project/");
 	
-	window.battle = new Battle();
-	battle.init();
+	battle = new Battle();
+	battle.init(<?= $this->session->userdata("id"); ?>);
 	battle.setUI({
 		"fp": "player-field-{0}",
 		"sp": "party-{0}",
-		"fe": "enemy-field-{0}"
+		"fe": "enemy-field-{0}",
+		"mo": "modal"
 	});
 
 	$("#run").click(function() {
@@ -107,18 +118,21 @@ $(document).ready(function () {
 	$("#fight").click(function() {
 		battle.issue("attack");
 	});
+	$("#modal").on("hidden.bs.modal", function(e) {
+		$(location).attr("href", "town");
+	});
 
-	window.uiupdate = setInterval(battle.updateUI, 100);
-	window.stepupdate = setInterval(battle.step, 1000);
-	window.endupdate = setInterval(endBattle, 1500);
+	uiupdate = setInterval(battle.updateUI, 100);
+	stepupdate = setInterval(battle.step, 1000);
+	endupdate = setInterval(endBattle, 1500);
 });
 function endBattle() {
 	if(battle.hasEnded()) {
 		battle.postmortem();
 		battle.saveChanges();
-		clearInterval(window.uiupdate);
-		clearInterval(window.stepupdate);
-		clearInterval(window.endupdate);
+		clearInterval(uiupdate);
+		clearInterval(stepupdate);
+		clearInterval(endupdate);
 	}
 }
 </script>
