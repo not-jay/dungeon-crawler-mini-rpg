@@ -25,6 +25,7 @@ class Unit_model extends CI_Model {
 	public function get_party($user_id) {
 		$this->db->where("characters.user_id", $user_id);
 		$this->db->select("*");
+		$this->db->select("character_stats.char_id AS id");
 		$this->db->select("character_stats.id AS stats_id");
 		$this->db->join("character_stats", "character_stats.char_id = characters.id");
 		$query = $this->db->get("characters");
@@ -45,6 +46,43 @@ class Unit_model extends CI_Model {
 		$enemy_lineup = array_slice($array, 0, 4);
 
 		return $this->jsonify($enemy_lineup);
+	}
+
+	public function isFull($user_id) {
+		$this->db->where("user_id", $user_id);
+
+		return $this->db->get("characters")->num_rows() == 4;
+	}
+
+	public function add($unit) {
+		$this->db->trans_start();
+
+		$this->db->insert("characters", $unit["characters"]);
+		$unit["character_stats"]["char_id"] = $this->db->insert_id();
+		$this->db->insert("character_stats", $unit["character_stats"]);
+
+		$this->db->trans_complete();
+		return $this->db->trans_status();
+	}
+
+	public function update($units) {
+		$this->db->trans_start();
+		foreach($units as $unit):
+			if($unit["character_stats"]["hp"] <= 0):
+				$this->db->where("char_id", $unit["character_stats"]["char_id"]);
+				$this->db->delete("character_stats");
+				$this->db->where("id", $unit["character_stats"]["char_id"]);
+				$this->db->delete("characters");
+			else:
+				$this->db->where("char_id", $unit["character_stats"]["char_id"]);
+				$this->db->update("character_stats", $unit["character_stats"]);
+
+				$this->db->where("id", $unit["character_stats"]["char_id"]);
+				$this->db->update("characters", $unit["characters"]);
+			endif;
+		endforeach;
+		$this->db->trans_complete();
+		return $this->db->trans_status();
 	}
 
 }
