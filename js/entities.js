@@ -65,6 +65,7 @@ var Unit = function(data) {
 
 	this.id = function() { return id; }
 	this.user_id = function() { return user_id; }
+	this.sprite_name = function() { return sprite_name; }
 	this.sprite = function(key) {
 		if(key === "avatar") {
 			return String.format("img/avatars/{0}.gif", sprite_name);
@@ -201,6 +202,7 @@ Unit.prototype.jsonify = function() {
 	return {
 		"characters": {
 			"name"			: this.name,
+			"sprite_name"	: this.sprite_name(),
 			"id"			: this.id()
 		},
 		"character_stats": {
