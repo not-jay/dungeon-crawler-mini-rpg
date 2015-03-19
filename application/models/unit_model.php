@@ -14,8 +14,8 @@ class Unit_model extends CI_Model {
 		$this->db->where("characters.id", $id);
 		$this->db->select("*");
 		$this->db->select("character_stats.id AS stats_id");
-		$this->db->join("character_stats", "character_stats.char_id = characters.id");
-		$query = $this->db->get("characters");
+		$this->db->join("characters", "characters.id = character_stats.char_id", "right");
+		$query = $this->db->get("character_stats");
 
 		$row = $query->first_row();
 		$query->free_result();

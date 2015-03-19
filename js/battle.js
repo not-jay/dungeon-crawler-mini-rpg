@@ -22,9 +22,6 @@ var Battle = function() {
 		isDungeon = (flag === undefined)?true:flag;
 
 		player.addAll(Unit.createAll(controller("unit/get_party", "json", 1))); //TODO: Replace 1 with user_id
-		x = new Unit({"name": "Test", "id": "9", "sprite_name": "celes", "level": -1});
-		x.levelUp(2);
-		player.add(x); //TODO: Replace 1 with user_id
 		enemy.addAll(Unit.createAll(controller("unit/get_enemy_party", "json"))); //TODO: Use isDungeon
 		enemy.__massLevelUp(player.averageLevel());
 		unit_list = Party.merge(player, enemy);
@@ -245,15 +242,18 @@ var Battle = function() {
 	}
 
 	this.postmortem = function() {
-
+		if(enemy.dead() === enemy.size())
+			console.log("Yaaaaay!");
+		if(player.dead() === player.size())
+			console.log("Huuuuuuu :<");
 	}
 
 	this.saveChanges = function() {
+		if(!isDungeon) return;
 		$.ajax(window.link.base_url("unit/update"), {
 			type: "POST",
-			data: player.jsonify(),
-			success: function(data) {
-				console.log(data);
+			data: {
+				"units": player.jsonify()
 			}
 		});
 	}

@@ -114,8 +114,7 @@ $(document).ready(function () {
 });
 function endBattle() {
 	if(battle.hasEnded()) {
-		//show modal?
-		console.log("Huuuuuuuuuu");
+		battle.postmortem();
 		battle.saveChanges();
 		clearInterval(window.uiupdate);
 		clearInterval(window.stepupdate);
