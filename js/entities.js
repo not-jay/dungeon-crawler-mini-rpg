@@ -41,6 +41,24 @@ window.controller = function(link, type) {
 }
 
 /**
+ *	For sending stuff to the controller,
+ *	attached to window for global usage
+ */
+window.controllerPost = function(link, payload, onSuccess, returnType, isAsync) {
+	if(!link.endsWith("/")) link += "/";
+	returnType = returnType || "text";
+	isAsync = (isAsync === undefined)?true:isAsync;
+
+	$.ajax(window.link.base_url(link), {
+		type: "POST",
+		async: isAsync,
+		dataType: returnType,
+		data: payload,
+		success: onSuccess
+	});
+}
+
+/**
  *	Constructor for the unit "class"
  */
 var Unit = function(data) {
@@ -118,7 +136,7 @@ Unit.prototype.attackTarget = function(target, exp_grant) {
 		}
 		console.log(String.format("...for {0} damage!", damage));
 
-		target.hp -= damage;
+		target.hp = (target.hp - damage <= 0)?0:(target.hp - damage);
 		target.lastAttacker = this;
 
 		if(exp_grant) {
@@ -203,6 +221,7 @@ Unit.prototype.jsonify = function() {
 		"characters": {
 			"name"			: this.name,
 			"sprite_name"	: this.sprite_name(),
+			"user_id"		: this.user_id(),
 			"id"			: this.id()
 		},
 		"character_stats": {
