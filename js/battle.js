@@ -252,18 +252,28 @@ var Battle = function() {
 			i, length = player.size();
 
 		if(enemy.dead() === enemy.size())
-			winner = "player";
+			winner = "won";
 		if(player.dead() === player.size())
-			winner = "enemy";
-
-		for(i = 0; i < length; i++) {
-			if(!player.get(i).isAlive()) {
-				dead += String.format(", {0}", player.get(i).name);
-			}
+			winner = "lost";
+		if((player.dead() !== player.size()) &&
+		   	(enemy.dead() !== enemy.size())) {
+			winner = "have successfully retreated";
 		}
-		dead = dead.slice(2);
 
-		$(String.format("#{0} .modal-title", ui.modal)).html(String.format("You {0}!", (winner === "player")?"won":"lost"));
+		if(player.dead() >= 4) {
+			dead = "Your entire party has fallen in battle.<br>May their souls rest in peace.";
+		} else if(player.dead() > 0) {
+			for(i = 0; i < length; i++) {
+				if(!player.get(i).isAlive()) {
+					dead += String.format(", {0}", player.get(i).name);
+				}
+			}
+			dead = String.format("Some of your units have been slain. <br>Dead units: {0}", dead.slice(2));
+		} else {
+			dead = "No one died. Hooray!<br>To the victor, the spoils!";
+		}
+
+		$(String.format("#{0} .modal-title", ui.modal)).html(String.format("You {0}!", winner));
 		$(String.format("#{0} .modal-body", ui.modal)).html(dead);
 		$(String.format("#{0} .modal-footer", ui.modal)).html(
 			"<button type='button' class='btn btn-primary' data-dismiss='modal'>Back to Town</button>"

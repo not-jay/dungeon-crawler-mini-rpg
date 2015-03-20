@@ -62,17 +62,17 @@ $(document).ready(function() {
     units = new Party();
     initBaseURL("");
 
-    playerParty.addAll(Unit.createAll(
-        controller("unit/get_party", "json",<?= $this->session->userdata("id"); ?>)
-    ));
-    units.addAll(Unit.createAll(JSON.parse('<?= json_encode($units); ?>')));
-    ave = playerParty.averageLevel() || 1;
-    length = units.size();
-    for(i = 0; i < length; i++) {
-        var low = ((ave-2) <= 0)?1:(ave-2);
-        unit = units.get(i);
-        unit.levelUp(Math.floor(Math.random() * ave) + low);
-    }
+	playerParty.addAll(Unit.createAll(
+		controller("unit/get_party", "json",<?= $this->session->userdata("id"); ?>)
+	));
+	units.addAll(Unit.createAll(JSON.parse('<?= json_encode($units); ?>')));
+	ave = playerParty.averageLevel() || 1;
+	length = units.size();
+	for(i = 0; i < length; i++) {
+		var low = ((ave-2) <= 0)?1:(ave-2);
+		unit = units.get(i);
+		unit.levelUp(Math.floor(Math.random() * (ave - low + 1)) + low);
+	}
 
     $("#recruit").click(function() {
         var id = $("#id").val(),

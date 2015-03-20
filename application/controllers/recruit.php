@@ -9,9 +9,13 @@ class Recruit extends CI_Controller {
 	}
 
 	public function index() {
-		$data["units"] = json_decode($this->unit->get_enemy_party());
+		if(!$this->session->userdata("logged_in")):
+			redirect("/");
+		else:
+			$data["units"] = json_decode($this->unit->get_enemy_party());
 
-		$this->load->view("recruit/recruit_view", $data);
+			$this->load->view("recruit/recruit_view", $data);
+		endif;
 	}
 
 }

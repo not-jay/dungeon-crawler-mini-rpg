@@ -1,6 +1,6 @@
 <?php
 
-class Party extends CI_Controller {
+class Town extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
@@ -13,13 +13,13 @@ class Party extends CI_Controller {
 			redirect("/");
 		else:
 			$id = $this->session->userdata("id");
-			$data["units"] = json_decode($this->unit->get_party($id));
+			$data["open_dungeon"] = !$this->unit->isEmpty($id);
 
-			$this->load->view("party/party_view", $data);
+			$this->load->view("town/town_view", $data);
 		endif;
 	}
 
 }
 
-/* End of File party.php */
-/* Location: ./application/controllers/party.php */
+/* End of File town.php */
+/* Location: ./application/controllers/town.php */

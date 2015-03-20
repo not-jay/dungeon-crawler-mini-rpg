@@ -35,6 +35,13 @@ class User_model extends CI_Model {
 		return $this->db->get("users")->first_row('array');
 	}
 
+	function get_all_except($user_id) {
+		$this->db->where_not_in("id", array('-1', $user_id));
+		$this->db->select("id, username");
+
+		return $this->db->get("users")->result_array();
+	}
+
 	function register($user, $pass) {
 		date_default_timezone_set("Asia/Manila");
 		$data = array(

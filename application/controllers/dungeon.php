@@ -7,7 +7,11 @@ class Dungeon extends CI_Controller {
 	}
 
 	public function index() {
-		$this->load->view("dungeon/dungeon_view");
+		if(!$this->session->userdata("logged_in")):
+			redirect("/");
+		else:
+			$this->load->view("dungeon/dungeon_view");
+		endif;
 	}
 
 }

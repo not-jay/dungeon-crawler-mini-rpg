@@ -1,10 +1,10 @@
 div {
-	border: 1px dotted transparent;
+	/*border: 1px dotted transparent;*/
 }
 
 .field {
 	height: 50%;
-	border-color: green;
+	/*border-color: green;*/
 	background-image: url("../img/bg/bg.gif");
 	background-size: cover;
 	background-position: 0% 85%;
@@ -26,19 +26,19 @@ div {
 
 .battle-ui {
 	height: 50%;
-	border-color: aqua;
+	/*border-color: aqua;*/
 }
 
 .ui-left {
 	width: 30%;
 	height: 100%;
-	border-color: blue;
+	/*border-color: blue;*/
 }
 
 .ui-right {
 	width: 70%;
 	height: 100%;
-	border-color: red;
+	/*border-color: red;*/
 }
 
 .party-slot {
@@ -51,11 +51,11 @@ div {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: 0% 100%;
-	border-color: pink;
+	/*border-color: pink;*/
 }
 
 .status {
-	border-color: firebrick;
+	/*border-color: firebrick;*/
 	width: 75%;
 }
 
@@ -68,12 +68,12 @@ div {
 
 .enemies {
 	height: 100%;
-	border-color: lightcoral;
+	/*border-color: lightcoral;*/
 }
 
 .player {
 	height: 100%;
-	border-color: lightsteelblue;
+	/*border-color: lightsteelblue;*/
 }
 
 .retreating, .flip {

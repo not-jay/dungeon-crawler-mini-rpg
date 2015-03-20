@@ -48,6 +48,12 @@ class Unit_model extends CI_Model {
 		return $this->jsonify($enemy_lineup);
 	}
 
+	public function isEmpty($user_id) {
+		$this->db->where("user_id", $user_id);
+
+		return $this->db->get("characters")->num_rows() == 0;
+	}
+
 	public function isFull($user_id) {
 		$this->db->where("user_id", $user_id);
 
